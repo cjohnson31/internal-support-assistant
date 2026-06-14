@@ -57,7 +57,7 @@ Built as a portfolio project demonstrating end-to-end LLM engineering: retrieval
 
 ```bash
 # Clone and set up
-git clone https://github.com/yourusername/internal-support-assistant.git
+git clone https://github.com/cjohnson31/internal-support-assistant.git
 cd internal-support-assistant
 python -m venv .venv
 source .venv/bin/activate
