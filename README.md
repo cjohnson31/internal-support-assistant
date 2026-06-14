@@ -92,11 +92,18 @@ python -m src.slack
 > **Web UI note:** The web interface requires you to enter your own Anthropic API key.
 > Your key is sent directly to the Anthropic API per-request and is never stored.
 
-### Run with Docker
+### Run with Docker (easiest)
 
 ```bash
-# Build and run (ingests docs automatically on startup)
+# Build and run — ingests docs, starts web UI at http://localhost:8000
 docker compose -f docker/docker-compose.yml up --build
+```
+
+No `.env` file needed for the web UI — you enter your API key in the browser.
+
+To also run the Slack bot (requires `.env` with Slack tokens):
+```bash
+docker compose -f docker/docker-compose.yml --profile slack up --build
 ```
 
 ### Run Evals
