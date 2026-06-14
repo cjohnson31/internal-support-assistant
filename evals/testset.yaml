@@ -1,0 +1,316 @@
+# Eval test set for the Internal Support Assistant
+# 30 answerable questions + 10 out-of-scope (should_refuse: true)
+#
+# Fields:
+#   id: unique identifier
+#   question: the user's question
+#   key_facts: facts the answer MUST contain to be correct
+#   expected_source_ids: source docs that SHOULD appear in retrieval
+#   should_refuse: true if the agent should decline to answer
+
+# ── Service Accounts ──────────────────────────────────────────────
+
+- id: sa-001
+  question: "How do I create a new service account?"
+  key_facts:
+    - "go to Atlas → Service Accounts → Create New"
+    - "naming convention is svc-<team>-<purpose>"
+    - "credentials are shown only once at creation"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+- id: sa-002
+  question: "How do I rotate credentials for a service account?"
+  key_facts:
+    - "Atlas → Service Accounts → account name → Security"
+    - "click Rotate Credentials"
+    - "old secret valid for 24 hours grace period"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+- id: sa-003
+  question: "What happens to inactive service accounts?"
+  key_facts:
+    - "flagged for review after 90 days"
+    - "automatically disabled after 180 days"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+- id: sa-004
+  question: "What is the maximum number of service accounts per namespace?"
+  key_facts:
+    - "25 service accounts per namespace"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+- id: sa-005
+  question: "How do I handle an emergency credential leak?"
+  key_facts:
+    - "click Revoke Immediately"
+    - "disables the old secret instantly"
+    - "no grace period"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+- id: sa-006
+  question: "What's the naming convention for service accounts?"
+  key_facts:
+    - "svc-<team>-<purpose>"
+  expected_source_ids: ["service-accounts", "TK-039"]
+  should_refuse: false
+
+- id: sa-007
+  question: "How many API scopes can a service account have?"
+  key_facts:
+    - "up to 10 API scopes"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+- id: sa-008
+  question: "Where can I find the audit log for service account actions?"
+  key_facts:
+    - "Atlas → Compliance → Audit Log"
+    - "retained for 1 year"
+  expected_source_ids: ["service-accounts"]
+  should_refuse: false
+
+# ── Deployments ────────────────────────────────────────────────────
+
+- id: dep-001
+  question: "Who can deploy to production?"
+  key_facts:
+    - "Team Lead or above"
+  expected_source_ids: ["deployments"]
+  should_refuse: false
+
+- id: dep-002
+  question: "How do I roll back a production deployment?"
+  key_facts:
+    - "Atlas → Deployments → pipeline → History"
+    - "click Rollback to This Version"
+    - "takes effect within 60 seconds"
+    - "does not revert database migrations"
+  expected_source_ids: ["deployments"]
+  should_refuse: false
+
+- id: dep-003
+  question: "Why is my deployment stuck in Pending?"
+  key_facts:
+    - "maximum 3 concurrent deployments per namespace"
+    - "wait for one to finish or cancel one"
+  expected_source_ids: ["deployments", "TK-005"]
+  should_refuse: false
+
+- id: dep-004
+  question: "How do I enable auto-deploy for staging?"
+  key_facts:
+    - "pipeline settings"
+    - "auto-deploy available for dev and staging only"
+    - "production requires manual approval"
+  expected_source_ids: ["deployments"]
+  should_refuse: false
+
+- id: dep-005
+  question: "What is the maximum container image size for deployments?"
+  key_facts:
+    - "2 GB"
+  expected_source_ids: ["deployments"]
+  should_refuse: false
+
+- id: dep-006
+  question: "My build is failing with an OOM error. What should I do?"
+  key_facts:
+    - "4 GB memory limit"
+    - "optimize build or request larger builder"
+    - "#platform-eng"
+  expected_source_ids: ["deployments", "TK-010"]
+  should_refuse: false
+
+- id: dep-007
+  question: "Health check keeps failing after deployment. What's wrong?"
+  key_facts:
+    - "must respond 200 on /healthz"
+    - "within 30 seconds of starting"
+  expected_source_ids: ["deployments", "TK-008"]
+  should_refuse: false
+
+# ── Access Requests ────────────────────────────────────────────────
+
+- id: ar-001
+  question: "How do I request a role change in Atlas?"
+  key_facts:
+    - "Atlas → Access Requests → New Request"
+    - "business justification required"
+    - "approved by direct manager"
+  expected_source_ids: ["access-requests"]
+  should_refuse: false
+
+- id: ar-002
+  question: "How long does it take for an access request to be approved?"
+  key_facts:
+    - "standard: 2 business days"
+    - "urgent: 4 hours"
+    - "auto-escalated after 5 business days"
+  expected_source_ids: ["access-requests"]
+  should_refuse: false
+
+- id: ar-003
+  question: "What happens if I don't provide a business justification on my access request?"
+  key_facts:
+    - "auto-rejected"
+  expected_source_ids: ["access-requests", "TK-025"]
+  should_refuse: false
+
+- id: ar-004
+  question: "How do I extend temporary access that's about to expire?"
+  key_facts:
+    - "submit a new access request"
+    - "reference the original"
+  expected_source_ids: ["access-requests", "TK-033"]
+  should_refuse: false
+
+# ── VPN / Network ─────────────────────────────────────────────────
+
+- id: vpn-001
+  question: "Which VPN profile do I need to access Atlas?"
+  key_facts:
+    - "Engineering profile"
+  expected_source_ids: ["vpn-and-network"]
+  should_refuse: false
+
+- id: vpn-002
+  question: "I'm on office WiFi but can't access production. Why?"
+  key_facts:
+    - "production always requires VPN"
+    - "even on office WiFi"
+  expected_source_ids: ["vpn-and-network", "TK-045"]
+  should_refuse: false
+
+- id: vpn-003
+  question: "VPN keeps disconnecting. What should I try?"
+  key_facts:
+    - "try switching VPN servers"
+    - "Settings → Server List"
+  expected_source_ids: ["vpn-and-network", "TK-024"]
+  should_refuse: false
+
+# ── Incidents ──────────────────────────────────────────────────────
+
+- id: inc-001
+  question: "How do I declare an incident in Atlas?"
+  key_facts:
+    - "Atlas → Incidents → Declare Incident"
+    - "select severity level"
+    - "auto-creates Slack channel"
+    - "pages on-call engineer"
+  expected_source_ids: ["runbook-incidents"]
+  should_refuse: false
+
+- id: inc-002
+  question: "What's the difference between SEV-2 and SEV-3?"
+  key_facts:
+    - "SEV-2: service degraded, partial customer impact"
+    - "SEV-3: internal tooling broken, no customer impact"
+  expected_source_ids: ["runbook-incidents"]
+  should_refuse: false
+
+- id: inc-003
+  question: "When is a post-incident review required?"
+  key_facts:
+    - "SEV-1 and SEV-2"
+    - "within 5 business days"
+    - "blameless"
+  expected_source_ids: ["runbook-incidents"]
+  should_refuse: false
+
+# ── Onboarding ─────────────────────────────────────────────────────
+
+- id: onb-001
+  question: "I'm a new hire and can't log into Atlas. What should I do?"
+  key_facts:
+    - "set up MFA on SSO account"
+    - "sso.company.com"
+  expected_source_ids: ["onboarding"]
+  should_refuse: false
+
+- id: onb-002
+  question: "I started this week and can't clone any repos. Help?"
+  key_facts:
+    - "add SSH key to GitHub Enterprise"
+    - "Settings → SSH Keys"
+  expected_source_ids: ["onboarding", "TK-016"]
+  should_refuse: false
+
+# ── Cross-topic ────────────────────────────────────────────────────
+
+- id: cross-001
+  question: "What are the four roles in Atlas and what can each one do?"
+  key_facts:
+    - "Viewer: read-only"
+    - "Developer: create service accounts, deploy to staging"
+    - "Team Lead: approve access requests, deploy to production"
+    - "Admin: full access"
+  expected_source_ids: ["getting-started"]
+  should_refuse: false
+
+# ── Out-of-scope (should refuse) ──────────────────────────────────
+
+- id: oos-001
+  question: "What is the company's parental leave policy?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-002
+  question: "How do I submit an expense report?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-003
+  question: "What's the stock ticker for our company?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-004
+  question: "Can you write me a Python script to sort a list?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-005
+  question: "What is the meaning of life?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-006
+  question: "How do I configure Jira for my team?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-007
+  question: "What's the wifi password for the guest network?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-008
+  question: "How do I book a conference room?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-009
+  question: "What is our company's revenue this quarter?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true
+
+- id: oos-010
+  question: "How do I set up a Kubernetes cluster from scratch?"
+  key_facts: []
+  expected_source_ids: []
+  should_refuse: true

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "internal-support-assistant"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.28",
+    "chromadb>=0.5",
+    "sentence-transformers>=3.0",
+    "python-dotenv>=1.0",
+    "pydantic-settings>=2.0",
+    "pydantic>=2.0",
+    "slack-bolt>=1.18",
+    "click>=8.1",
+    "rich>=13.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "ruff>=0.4"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "evals*"]
+
+[tool.ruff]
+line-length = 100

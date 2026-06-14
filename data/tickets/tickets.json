@@ -1,0 +1,402 @@
+[
+  {
+    "id": "TK-001",
+    "title": "Cannot log into Atlas",
+    "description": "New employee, trying to access Atlas for the first time but getting 'SSO authentication failed'.",
+    "resolution": "User had not set up MFA on their SSO account. Directed them to https://sso.company.com/setup to enable MFA, after which Atlas login worked.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-002",
+    "title": "Service account credentials lost",
+    "description": "Team accidentally deleted the secret for svc-billing-api-writer. Need new credentials.",
+    "resolution": "Walked user through credential rotation: Atlas → Service Accounts → svc-billing-api-writer → Security → Rotate Credentials. Reminded them the old secret stays valid for 24 hours during the grace period.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-003",
+    "title": "Production deploy permission denied",
+    "description": "I'm getting 'Permission denied' when trying to deploy to production. I have a Developer role.",
+    "resolution": "Production deployments require Team Lead role or above. Advised user to ask their manager to either deploy on their behalf or submit an access request for a role upgrade.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-004",
+    "title": "VPN connects but can't reach Atlas",
+    "description": "VPN is connected and I can access Slack, but Atlas gives a timeout error.",
+    "resolution": "User was on the 'General' VPN profile. Switched to 'Engineering' profile which includes Atlas and internal infrastructure routing. Atlas loaded immediately.",
+    "category": "network",
+    "resolved": true
+  },
+  {
+    "id": "TK-005",
+    "title": "Deployment stuck in Pending",
+    "description": "My deployment has been in 'Pending' state for 20 minutes. It usually deploys in 2-3 minutes.",
+    "resolution": "Namespace had 3 concurrent deployments running (the maximum). Advised user to wait for one to finish or cancel a non-critical deploy. Deployment proceeded after another deploy completed.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-006",
+    "title": "Access request stuck for over a week",
+    "description": "I submitted an access request for namespace access 8 days ago and it's still pending.",
+    "resolution": "Request should have auto-escalated after 5 business days. Checked and found the approver (namespace owner) was on PTO. Manually escalated to their backup. Approved within 2 hours.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-007",
+    "title": "Service account hitting rate limits",
+    "description": "Our svc-analytics-reader account is getting 429 errors intermittently.",
+    "resolution": "The namespace rate limit is 1000 req/min shared across all service accounts. User's namespace had 5 accounts and combined traffic was exceeding the limit. Advised batching requests and adding caching. Also suggested contacting #platform-eng for a rate limit increase if needed.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-008",
+    "title": "Health check failing after deploy",
+    "description": "Deployed a new version but it keeps rolling back because health checks fail.",
+    "resolution": "Service needs to respond 200 on /healthz within 30 seconds of starting. User's app had a slow startup (database migration running at boot). Moved migration to a separate init container and startup time dropped to 5 seconds.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-009",
+    "title": "Need temporary access to payments namespace",
+    "description": "I need to debug an issue in the payments namespace but I'm in the platform team.",
+    "resolution": "Directed user to submit an access request for temporary namespace access (Atlas → Access Requests → New Request). Suggested selecting 'temporary' with 7 days duration and including the incident number as business justification.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-010",
+    "title": "Build failing with OOM error",
+    "description": "Our deployment build keeps failing with an out-of-memory error. It was working fine last week.",
+    "resolution": "Recent dependency update increased build memory usage beyond the default 4 GB limit. Advised user to optimize their Docker build (multi-stage builds, .dockerignore) and contact #platform-eng to request a larger builder if optimization isn't sufficient.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-011",
+    "title": "Service account disabled automatically",
+    "description": "Our svc-legacy-batch account stopped working. Getting 'Account disabled' errors.",
+    "resolution": "Account was inactive for 180+ days and was automatically disabled per policy. User re-enabled it via Atlas admin console. Recommended setting up a periodic health check to keep it active if the batch job runs infrequently.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-012",
+    "title": "VPN certificate error",
+    "description": "Getting a certificate error when trying to connect to VPN. Was working yesterday.",
+    "resolution": "VPN client needed updating. Directed user to download the latest version from the internal software portal at https://software.internal.company.com. Connection worked after update.",
+    "category": "network",
+    "resolved": true
+  },
+  {
+    "id": "TK-013",
+    "title": "How to declare an incident",
+    "description": "Our payments API is returning 500 errors for some users. I think this is SEV-2 but I don't know how to formally declare an incident.",
+    "resolution": "Walked user through: Atlas → Incidents → Declare Incident. Selected SEV-2 (degraded, partial customer impact). This auto-created a Slack channel and paged the on-call. Issue was resolved within 2 hours.",
+    "category": "incidents",
+    "resolved": true
+  },
+  {
+    "id": "TK-014",
+    "title": "Need to rollback production deployment",
+    "description": "We deployed a bad build to production and need to rollback immediately.",
+    "resolution": "Guided user through: Atlas → Deployments → [pipeline] → History → find the last healthy deploy → Rollback to This Version. Rollback took effect in ~45 seconds. Reminded that rollbacks don't revert DB migrations — but in this case no migrations were involved.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-015",
+    "title": "Can't add more service accounts",
+    "description": "Getting an error when trying to create a new service account. Message says 'namespace limit reached'.",
+    "resolution": "Each namespace has a limit of 25 service accounts. User's namespace was at the limit. Reviewed existing accounts and found 4 that were inactive/unused. Deleted those, freeing up slots for new accounts.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-016",
+    "title": "New hire can't clone repos",
+    "description": "Started this week, I can access Atlas but can't clone any repositories from GitHub Enterprise.",
+    "resolution": "User needed to add their SSH key to GitHub Enterprise (Settings → SSH Keys). After adding the key, git clone worked. Also noted this is covered in the Day 2-3 onboarding checklist.",
+    "category": "onboarding",
+    "resolved": true
+  },
+  {
+    "id": "TK-017",
+    "title": "Staging deploy works but production fails",
+    "description": "Same code deploys fine to staging but production deploy fails with permission errors.",
+    "resolution": "User's pipeline was using a service account with staging-only scopes. Created a separate service account with production scopes and updated the pipeline configuration.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-018",
+    "title": "How to set up auto-deploy for staging",
+    "description": "Want our staging environment to auto-deploy when we push to main.",
+    "resolution": "Directed user to pipeline settings: Atlas → Deployments → [pipeline] → Settings → Enable Auto-Deploy. Noted that auto-deploy is only available for dev and staging — production always requires manual approval.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-019",
+    "title": "MFA locked out",
+    "description": "Lost my phone and can't access MFA. Locked out of everything.",
+    "resolution": "Directed user to contact IT help desk (#it-help on Slack from a colleague's device, or it-help@company.com). IT can reset MFA after identity verification. Recommended setting up backup MFA methods once access is restored.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-020",
+    "title": "Audit log shows unauthorized access attempts",
+    "description": "Seeing repeated 'unauthorized' entries in the audit log for our namespace from an unknown service account.",
+    "resolution": "Identified the service account as belonging to a decommissioned project. The account was still active and had a stale config pointing at the wrong namespace. Disabled the account and notified the owning team.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-021",
+    "title": "Post-incident review template",
+    "description": "We just resolved a SEV-1 incident and need to do the PIR. Where's the template?",
+    "resolution": "PIR template is at Atlas → Incidents → [incident] → Create PIR. Reminded user that SEV-1 PIRs must be completed within 5 business days. The template covers timeline, root cause, contributing factors, and action items.",
+    "category": "incidents",
+    "resolved": true
+  },
+  {
+    "id": "TK-022",
+    "title": "Container image too large to deploy",
+    "description": "Deploy fails saying image exceeds the 2 GB limit. Our image is 2.3 GB.",
+    "resolution": "Advised using multi-stage Docker builds to reduce image size: separate build stage with all dev dependencies from a slim runtime stage. After refactoring Dockerfile, image dropped to 800 MB.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-023",
+    "title": "Service account scope confusion",
+    "description": "Created a service account but it can't access the billing API. Not sure which scopes it needs.",
+    "resolution": "User needed the 'billing:read' scope. Walked through: Atlas → Service Accounts → [account] → Scopes → Add Scope. Noted that each account can have up to 10 scopes and the available scopes are listed in the service catalog.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-024",
+    "title": "Frequent VPN disconnections",
+    "description": "VPN keeps dropping every 10-15 minutes. Internet connection is fine otherwise.",
+    "resolution": "Suggested switching VPN servers: GlobalConnect → Settings → Server List. User switched from US-East to US-West and disconnections stopped. Also checked for VPN client updates.",
+    "category": "network",
+    "resolved": true
+  },
+  {
+    "id": "TK-025",
+    "title": "Access request auto-rejected",
+    "description": "Submitted an access request but it was auto-rejected immediately.",
+    "resolution": "Requests without a business justification are auto-rejected. User had left the justification field empty. Resubmitted with a proper justification explaining the need, and it was approved by their manager.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-026",
+    "title": "Can't find service in Atlas catalog",
+    "description": "Looking for the 'user-auth' service in the Atlas service catalog but it doesn't appear.",
+    "resolution": "Service was registered under a different name ('identity-service'). Helped user find it using the catalog search. Suggested the owning team add aliases to make discoverability easier.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-027",
+    "title": "Onboarding buddy not assigned",
+    "description": "Started 3 days ago and still don't have an onboarding buddy. My manager said one would be assigned.",
+    "resolution": "Onboarding buddies are assigned by the team lead. Pinged the team lead who had forgotten. Buddy assigned same day. Also directed user to #new-hires for general questions in the meantime.",
+    "category": "onboarding",
+    "resolved": true
+  },
+  {
+    "id": "TK-028",
+    "title": "Deployment build timeout",
+    "description": "Build is timing out at the 15-minute mark. It needs about 20 minutes for our large monorepo.",
+    "resolution": "Default build timeout is 15 minutes, configurable up to 30 minutes. Adjusted in pipeline settings: Atlas → Deployments → [pipeline] → Settings → Build Timeout. Set to 25 minutes. Also recommended investigating build caching to reduce build time long-term.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-029",
+    "title": "How to check who approved an access request",
+    "description": "Need to know who approved namespace access for a contractor as part of a security audit.",
+    "resolution": "All access request decisions are logged in the Audit Log: Atlas → Compliance → Audit Log. Filtered by the contractor's name and found the approval record with approver, timestamp, and justification. Logs are retained for 1 year.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-030",
+    "title": "Local dev can't reach internal APIs",
+    "description": "Running a service locally but API calls to internal services are timing out.",
+    "resolution": "User needed VPN connected with the Engineering profile to access internal APIs from local dev. Also checked that /etc/hosts wasn't overriding internal DNS entries. After VPN connection with correct profile, API calls worked.",
+    "category": "network",
+    "resolved": true
+  },
+  {
+    "id": "TK-031",
+    "title": "Emergency credential revocation needed",
+    "description": "Service account credentials were accidentally committed to a public GitHub repo.",
+    "resolution": "Used emergency revocation: Atlas → Service Accounts → [account] → Security → Revoke Immediately. This disabled the old secret instantly (no 24h grace period). Generated new credentials and helped user remove the commit from git history. Reported the incident to the security team.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-032",
+    "title": "Incident channel not auto-created",
+    "description": "Declared an incident in Atlas but the Slack channel wasn't created.",
+    "resolution": "Atlas-Slack integration had a temporary issue. Manually created the incident channel following the naming convention #inc-<number>. Reported the integration bug to #platform-eng. The on-call was paged correctly.",
+    "category": "incidents",
+    "resolved": true
+  },
+  {
+    "id": "TK-033",
+    "title": "Need to extend temporary access",
+    "description": "My temporary namespace access expires tomorrow and I still need it for the project.",
+    "resolution": "Temporary access can't be extended directly. Advised user to submit a new access request referencing the original request ID. They'll receive a reminder 3 days before expiration for future cases.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-034",
+    "title": "What VPN profile for Atlas access",
+    "description": "Just set up VPN but there are three profiles. Which one do I need for Atlas?",
+    "resolution": "Engineering profile is needed for Atlas access. General profile covers email/Slack/wikis. Full Tunnel routes all traffic and is only needed for compliance requirements. Directed user to select Engineering.",
+    "category": "network",
+    "resolved": true
+  },
+  {
+    "id": "TK-035",
+    "title": "Manager can't see access request to approve",
+    "description": "I submitted an access request but my manager says they don't see it in their queue.",
+    "resolution": "Manager needed to check Atlas → Access Requests → Pending Approvals (not their personal queue). The request was there. Also noted that approvers receive an email notification — asked manager to check spam folder.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-036",
+    "title": "Setting up first deployment pipeline",
+    "description": "New to Atlas, trying to set up my first deployment pipeline but don't know where to start.",
+    "resolution": "Walked through: Atlas → Deployments → New Pipeline → Connect GitHub repo → select branch → configure build (Atlas auto-detects Dockerfile) → set target to staging first → Create Pipeline. Recommended starting with dev/staging before production.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-037",
+    "title": "Security training deadline",
+    "description": "When does the security awareness training need to be completed? I started last week.",
+    "resolution": "Security awareness training at https://training.internal.company.com should be completed within the first week per the onboarding checklist. User was on Day 8 — advised completing it ASAP as some system access is gated behind training completion.",
+    "category": "onboarding",
+    "resolved": true
+  },
+  {
+    "id": "TK-038",
+    "title": "Dual approval stuck on security team",
+    "description": "My access request for sensitive data scopes has been approved by my manager but is stuck waiting for security team approval.",
+    "resolution": "Sensitive scope requests require dual approval (manager + security team). Security team SLA is 2 business days. Request was 1 day old — within SLA. Advised patience but shared that marking as urgent with justification can speed it up if needed.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-039",
+    "title": "Service account naming convention",
+    "description": "What's the naming convention for service accounts? Want to make sure I do it right.",
+    "resolution": "Convention is svc-<team>-<purpose> (e.g., svc-payments-db-reader, svc-analytics-etl-writer). This is enforced in the creation form. Descriptive names make auditing and debugging easier.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-040",
+    "title": "Rollback didn't fix database issue",
+    "description": "Rolled back a production deploy but the app is still broken because a bad database migration ran.",
+    "resolution": "Rollbacks redeploy the previous container image but do NOT revert database migrations. Advised contacting #platform-eng for help writing a reverse migration. For future deploys, recommended testing migrations in staging first and using reversible migrations.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-041",
+    "title": "Atlas showing wrong team members",
+    "description": "My team page in Atlas shows people who left the company months ago.",
+    "resolution": "Team membership in Atlas syncs from HR system daily. The departed employees' HR records hadn't been fully processed. Reported to HR and the sync corrected the team page overnight.",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-042",
+    "title": "Need viewer access for contractor",
+    "description": "We have a new contractor who needs Viewer access to Atlas to see our dashboards.",
+    "resolution": "Contractors get Atlas access through the same SSO flow. Their manager (or the sponsoring employee) submits an access request. For Viewer role, only manager approval is needed. Advised keeping contractor access temporary (90-day max).",
+    "category": "access",
+    "resolved": true
+  },
+  {
+    "id": "TK-043",
+    "title": "On-call not paged during incident",
+    "description": "Declared a SEV-1 incident but the on-call engineer wasn't paged.",
+    "resolution": "The on-call schedule for the affected service hadn't been updated after a team change. The previous on-call had left the company. Updated the schedule in Atlas and manually paged the correct engineer. Reminded team to keep on-call rotations current.",
+    "category": "incidents",
+    "resolved": true
+  },
+  {
+    "id": "TK-044",
+    "title": "How to check service account audit log",
+    "description": "Security asked me to provide the audit trail for one of our service accounts over the past 6 months.",
+    "resolution": "Audit logs are at Atlas → Compliance → Audit Log. Can filter by service account name and date range. Logs include all actions: creation, credential rotations, scope changes. Logs are retained for 1 year. Exported the filtered results as CSV for the security team.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-045",
+    "title": "Office WiFi can't access production",
+    "description": "I'm in the office on CorpSecure WiFi but can't reach production APIs.",
+    "resolution": "Production environment access always requires VPN, even on office WiFi. This is a security policy. Connected to VPN with Engineering profile and production access worked. CorpSecure WiFi is sufficient for non-production resources.",
+    "category": "network",
+    "resolved": true
+  },
+  {
+    "id": "TK-046",
+    "title": "Confused about incident severity levels",
+    "description": "We have an issue where our internal admin tool is down. Not sure if this is SEV-2 or SEV-3.",
+    "resolution": "SEV-3: internal tooling broken with no customer impact. SEV-2 would be if customer-facing functionality is degraded. Since the admin tool is internal-only, this is SEV-3 with a 4-hour response time SLA. Helped user declare the incident correctly.",
+    "category": "incidents",
+    "resolved": true
+  },
+  {
+    "id": "TK-047",
+    "title": "Pipeline auto-detect not working",
+    "description": "Created a new pipeline but Atlas didn't auto-detect our build configuration.",
+    "resolution": "Atlas auto-detects Dockerfile, package.json, or pyproject.toml at the repo root. User's config files were in a subdirectory. Moved Dockerfile to repo root and auto-detection worked. Alternative: manually configure build steps in pipeline settings.",
+    "category": "deployments",
+    "resolved": true
+  },
+  {
+    "id": "TK-048",
+    "title": "Namespace rate limit too low",
+    "description": "Our namespace hits the 1000 req/min rate limit during peak hours. Need an increase.",
+    "resolution": "Rate limit increases are handled by the Platform team. Directed user to file a request in #platform-eng with current usage stats and justification. In the meantime, suggested request batching and caching to reduce call volume.",
+    "category": "service-accounts",
+    "resolved": true
+  },
+  {
+    "id": "TK-049",
+    "title": "Where to find dev environment setup guide",
+    "description": "Onboarding checklist mentions a 'Dev Environment guide' but I can't find it.",
+    "resolution": "The dev environment setup guide is team-specific and should be in the team's GitHub repo README or wiki. Directed user to ask their onboarding buddy or team lead for the link. Also suggested checking the team's Slack channel pins.",
+    "category": "onboarding",
+    "resolved": true
+  },
+  {
+    "id": "TK-050",
+    "title": "Access revoked without notice",
+    "description": "My access to the analytics namespace was suddenly revoked. I was working on something.",
+    "resolution": "Checked audit log — the namespace owner had revoked the user's access. It was temporary access that had been extended informally without a new access request. Re-submitted a proper access request with business justification. Reminded user that temporary access requires a new formal request to extend.",
+    "category": "access",
+    "resolved": true
+  }
+]
