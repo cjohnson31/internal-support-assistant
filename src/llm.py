@@ -29,9 +29,14 @@ def _embedder():
     return _embed_model
 
 
-def complete(prompt: str, system: str = "", model: str | None = None) -> str:
-    """Send a prompt and return the text completion."""
-    response = _client().messages.create(
+def complete(prompt: str, system: str = "", model: str | None = None, api_key: str | None = None) -> str:
+    """Send a prompt and return the text completion.
+
+    If api_key is provided, creates a one-off client instead of using the default.
+    This allows the web UI to pass per-request keys without storing them.
+    """
+    client = anthropic.Anthropic(api_key=api_key) if api_key else _client()
+    response = client.messages.create(
         model=model or settings.llm_model,
         max_tokens=1024,
         system=system or "You are a helpful assistant.",

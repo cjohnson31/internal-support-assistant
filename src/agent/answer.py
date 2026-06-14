@@ -34,8 +34,11 @@ class Answer:
         return ids
 
 
-def generate_answer(question: str) -> Answer:
-    """Run the full RAG pipeline: retrieve → prompt → generate → confidence gate."""
+def generate_answer(question: str, api_key: str | None = None) -> Answer:
+    """Run the full RAG pipeline: retrieve → prompt → generate → confidence gate.
+
+    If api_key is provided, it's used for this request only (web UI flow).
+    """
     # Step 1: Retrieve relevant chunks
     results = search(question)
 
@@ -58,7 +61,7 @@ def generate_answer(question: str) -> Answer:
     user_prompt = build_user_prompt(question, results)
 
     # Step 4: Generate answer
-    response_text = complete(user_prompt, system=SYSTEM_PROMPT)
+    response_text = complete(user_prompt, system=SYSTEM_PROMPT, api_key=api_key)
 
     # Step 5: Check if the model itself decided to refuse
     refused = response_text.startswith(REFUSAL_PREFIX)

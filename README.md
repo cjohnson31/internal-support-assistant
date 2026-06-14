@@ -18,20 +18,25 @@ Built as a portfolio project demonstrating end-to-end LLM engineering: retrieval
 ## Architecture
 
 ```
-┌─────────────────┐     ┌──────────────┐     ┌───────────────┐
-│   Slack / CLI   │────▶│   Agent      │────▶│   LLM         │
-│   (user query)  │     │   Pipeline   │     │   (Claude)    │
-└─────────────────┘     └──────┬───────┘     └───────────────┘
-                               │ retrieve
-                        ┌──────▼───────┐
-                        │  Vector Store │
-                        │  (Chroma)     │
-                        └──────┬───────┘
-                               │ embedded
-                   ┌───────────▼───────────┐
-                   │  Knowledge Base Docs   │
-                   │  + Ticket History      │
-                   └───────────────────────┘
+┌──────────────────────────────┐
+│  Web UI / Slack / CLI        │
+│  (user query + API key)      │
+└──────────────┬───────────────┘
+               ▼
+┌──────────────────────────────┐     ┌───────────────┐
+│  Agent Pipeline              │────▶│  LLM (Claude) │
+│  retrieve → gate → generate  │     └───────────────┘
+└──────────────┬───────────────┘
+               │ retrieve
+        ┌──────▼───────┐
+        │  Vector Store │
+        │  (Chroma)     │
+        └──────┬───────┘
+               │ embedded
+   ┌───────────▼───────────┐
+   │  Knowledge Base Docs   │
+   │  + Ticket History      │
+   └───────────────────────┘
 ```
 
 **RAG Pipeline:**
@@ -74,12 +79,18 @@ cp .env.example .env
 # Ingest the knowledge base into the vector store
 python -m src.cli ingest
 
-# Ask a question via CLI
+# Start the web UI (http://localhost:8000)
+python -m src.web
+
+# Or ask via CLI
 python -m src.cli ask "How do I rotate service account credentials?"
 
-# Start the Slack bot
+# Or start the Slack bot (requires Slack app setup)
 python -m src.slack
 ```
+
+> **Web UI note:** The web interface requires you to enter your own Anthropic API key.
+> Your key is sent directly to the Anthropic API per-request and is never stored.
 
 ### Run with Docker
 
@@ -108,6 +119,7 @@ internal-support-assistant/
 │   ├── retrieval/           # Vector store search
 │   ├── agent/               # Prompt templates, answer generation, refusal gate
 │   ├── slack/               # Bolt app (Socket Mode)
+│   ├── web/                 # FastAPI web UI (BYOK — bring your own key)
 │   └── cli.py               # CLI commands (ingest, ask, search)
 ├── evals/
 │   ├── testset.yaml         # 38 labeled test cases
@@ -124,6 +136,7 @@ internal-support-assistant/
 - **LLM**: Claude (Anthropic) via official SDK, behind a provider-agnostic wrapper
 - **Embeddings**: `sentence-transformers` (all-MiniLM-L6-v2, 384-dim, runs locally)
 - **Vector Store**: Chroma (local, persistent)
+- **Web UI**: FastAPI single-page app (BYOK — users provide their own API key)
 - **Slack**: Bolt for Python (Socket Mode — no public URL needed)
 - **Evals**: LLM-as-judge with separate judge model; YAML test set
 - **Config**: pydantic-settings (env-driven)
