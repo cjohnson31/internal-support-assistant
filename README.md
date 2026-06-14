@@ -56,7 +56,7 @@ Built as a portfolio project demonstrating end-to-end LLM engineering: retrieval
 ### Prerequisites
 - Python 3.11+
 - An [Anthropic API key](https://console.anthropic.com/)
-- A [Slack app](https://api.slack.com/apps) with Socket Mode enabled (for Slack integration)
+- A [Slack app](https://api.slack.com/apps) with Socket Mode enabled (if running Slack bot integration)
 
 ### Setup
 
